@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="Dominoes.GameFieldView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Dominoes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Canvas x:Name="ParentTable" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Canvas x:Name="Table" MouseRightButtonDown="CanvasMoveMouseDown" MouseMove="CanvasMoveMouseMove" MouseRightButtonUp="CanvasMoveMouseUp"/>
+        </Canvas>
+
+        <StackPanel x:Name="PlayerDeck" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+        <StackPanel x:Name="BotDeck" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+
+        <Button Width="75" Height="75" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,20" x:Name="GetButton" FontSize="18">Get(**)</Button>
+        <Button Width="75" Height="75" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20,0,0,20" x:Name="SkipButton" FontSize="20">Skip</Button>
+
+        <!--<TextBox x:Name="Log" Width="150" HorizontalAlignment="Left"></TextBox>-->
+
+        <TextBlock x:Name="ResultGame" FontSize="40" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 125"/>
+    </Grid>
+</UserControl>
