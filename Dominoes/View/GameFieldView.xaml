@@ -5,7 +5,47 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dominoes"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="720" d:DesignWidth="1280">
+    <UserControl.Resources>
+        <Style TargetType="Button" x:Key="GameButtonStyle">
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontFamily" Value="Rockwell Extra Bold"/>
+            <Setter Property="Foreground" Value="#FFFFEFC6"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{x:Null}">
+                            <ContentPresenter Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#FFF9C94E"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="1.1" ScaleX="1.1"/>
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <UserControl.Background>
+        <ImageBrush ImageSource="background_clear.jpg"/>
+    </UserControl.Background>
     <Grid>
         <Canvas x:Name="ParentTable" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Canvas x:Name="Table" MouseRightButtonDown="CanvasMoveMouseDown" MouseMove="CanvasMoveMouseMove" MouseRightButtonUp="CanvasMoveMouseUp"/>
@@ -14,11 +54,19 @@
         <StackPanel x:Name="PlayerDeck" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
         <StackPanel x:Name="BotDeck" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center"/>
 
-        <Button Width="75" Height="75" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,20" x:Name="GetButton" FontSize="18">Get(**)</Button>
-        <Button Width="75" Height="75" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20,0,0,20" x:Name="SkipButton" FontSize="20">Skip</Button>
+        <Button Style="{DynamicResource GameButtonStyle}" HorizontalAlignment="Right" Margin="0,0,20,20" x:Name="GetButton">Get(**)</Button>
+        <Button Style="{DynamicResource GameButtonStyle}" HorizontalAlignment="Left" Margin="20,0,0,20" x:Name="SkipButton">Skip</Button>
 
-        <!--<TextBox x:Name="Log" Width="150" HorizontalAlignment="Left"></TextBox>-->
+        <StackPanel Visibility="Hidden" x:Name="ResultPanel">
+            <StackPanel.Background>
+                <SolidColorBrush Color="Black" Opacity="0.5"/>
+            </StackPanel.Background>
+            <StackPanel Margin="260" HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="#FFFFEFC6">
+                <Border BorderBrush="#FFC3A830" BorderThickness="3">
+                    <TextBlock x:Name="ResultText" FontFamily="Rockwell Extra Bold" FontSize="40" Margin="100 50" Foreground="#FF3C2B08" Text="Вы выйграли"/>
+                </Border>
+            </StackPanel>
 
-        <TextBlock x:Name="ResultGame" FontSize="40" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 125"/>
+        </StackPanel>
     </Grid>
 </UserControl>

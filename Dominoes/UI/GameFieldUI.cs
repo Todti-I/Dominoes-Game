@@ -78,10 +78,11 @@ namespace Dominoes
             {
                 var winner = gameField.GetWinner();
                 if (!(winner is Bot))
-                    view.ResultGame.Text = "Вы победили!!!";
-                else view.ResultGame.Text = $"Вы проиграли :(";
+                    view.ResultText.Text = "You win!!!";
+                else view.ResultText.Text = $"You lost :(";
             }
-            else view.ResultGame.Text = "Ничья!";
+            else view.ResultText.Text = "Draw!";
+            view.ResultPanel.Visibility = Visibility.Visible;
             await Task.Run(() => Thread.Sleep(3000));
             view.ClickBack(null, null);
         }

@@ -3,13 +3,52 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Dominoes"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="720" d:DesignWidth="1280">
+    <UserControl.Resources>
+        <Style TargetType="Button" x:Key="GameButtonStyle">
+            <Setter Property="FontSize" Value="55"/>
+            <Setter Property="FontFamily" Value="Rockwell Extra Bold"/>
+            <Setter Property="Foreground" Value="#FFFFEFC6"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{x:Null}">
+                            <ContentPresenter Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#FFF9C94E"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="1.1" ScaleX="1.1"/>
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <UserControl.Background>
+        <ImageBrush ImageSource="background.jpg"/>
+    </UserControl.Background>
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="50">
-            <Button Padding="30 5" FontSize="40" Margin="10" Click="ClickStartGame">Начать игру</Button>
-            <Button Padding="30 5" FontSize="40" Margin="10" Click="ClickExit">Выйти</Button>
+            <Button Click="ClickStartGame" Style="{DynamicResource GameButtonStyle}">Start game</Button>
+            <Button  Click="ClickExit" Style="{DynamicResource GameButtonStyle}">Exit</Button>
         </StackPanel>
+        <Image Source="logo.png" Margin="223,30,223,432" RenderTransformOrigin="0.5,0"/>
     </Grid>
 </UserControl>

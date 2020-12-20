@@ -26,7 +26,6 @@ namespace Dominoes
         {
             this.window = window;
             InitializeComponent();
-
         }
 
         private void ClickStartGame(object sender, RoutedEventArgs e)

@@ -26,7 +26,7 @@ namespace Dominoes
         {
             this.window = window;
             InitializeComponent();
-
+            ResultPanel.Visibility = Visibility.Hidden;
             var g = new GameFieldUI(this);
         }
 
