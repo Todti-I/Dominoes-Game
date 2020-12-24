@@ -62,6 +62,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="State\Direction.cs" />
     <Compile Include="UI\Animation.cs" />
     <Compile Include="DominoRoot.cs" />
     <Compile Include="View\MenuView.xaml.cs">

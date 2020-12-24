@@ -17,6 +17,8 @@ namespace Dominoes
 
         private readonly Canvas table;
 
+        private Direction currentDirection = Direction.None;
+
         private readonly Dictionary<DirectionMove, ImageDomino> LastImageDomino
             = new Dictionary<DirectionMove, ImageDomino>()
             {
@@ -24,12 +26,12 @@ namespace Dominoes
                 [DirectionMove.Right] = null,
             };
 
-        private readonly Dictionary<DirectionMove, List<ImageDomino>> helpDomino 
+        private readonly Dictionary<DirectionMove, List<ImageDomino>> helpDomino
             = new Dictionary<DirectionMove, List<ImageDomino>>()
-        {
-            [DirectionMove.Left] = new List<ImageDomino>(),
-            [DirectionMove.Right] = new List<ImageDomino>(),
-        };
+            {
+                [DirectionMove.Left] = new List<ImageDomino>(),
+                [DirectionMove.Right] = new List<ImageDomino>(),
+            };
 
         private bool IsFirstImage { get => LastImageDomino[DirectionMove.Left] == null && LastImageDomino[DirectionMove.Right] == null; }
 
@@ -38,22 +40,32 @@ namespace Dominoes
             this.gameField = gameField;
             this.table = table;
 
-            gameField.EventSetDomino += (domino, direction) => AddDomino(domino, direction);
+            gameField.EventSetDomino += AddDomino;
         }
 
-        public void AddDomino(Domino domino, DirectionMove direction)
+        public void AddDomino(Domino domino, DirectionMove move)
         {
             if (gameField.Root == null) return;
 
             var imageDomino = new ImageDomino(domino);
-            imageDomino.InitializeComponent(direction, LastImageDomino[direction]);
 
             if (IsFirstImage)
             {
+                imageDomino.InitializeComponent(DirectionMove.Left, Direction.Center);
                 LastImageDomino[DirectionMove.Left] = imageDomino;
                 LastImageDomino[DirectionMove.Right] = imageDomino;
             }
-            else LastImageDomino[direction] = imageDomino;
+            else
+            {
+                if (currentDirection == Direction.None)
+                {
+                    var directions = GetCorrectDirections(domino, move);
+                    currentDirection = directions[Generator.Random.Next(directions.Count)];
+                }
+                imageDomino.InitializeComponent(move, currentDirection, LastImageDomino[move]);
+                LastImageDomino[move] = imageDomino;
+                currentDirection = Direction.None;
+            }
 
             table.Children.Add(imageDomino);
             Animation.Add(imageDomino);
@@ -70,13 +82,16 @@ namespace Dominoes
             }
         }
 
-        private void CreateHelpDomino(Domino domino, DirectionMove direction, Action<DirectionMove> continueMove)
+        private void CreateHelpDomino(Domino domino, DirectionMove move, Action<DirectionMove> continueMove)
         {
-            if (!gameField.CheckDominoForCorrectMove(domino, direction)) return;
+            if (!gameField.CheckDominoForCorrectMove(domino, move)) return;
 
-            var help = CreateHelpImage(domino, direction, continueMove);
-            helpDomino[direction].Add(help);
-            table.Children.Add(help);
+            foreach (var e in GetCorrectDirections(domino, move))
+            {
+                var help = CreateHelpImage(domino, move, e, continueMove);
+                helpDomino[move].Add(help);
+                table.Children.Add(help);
+            }
         }
 
         private void ClearHelpDomino(DirectionMove direction)
@@ -92,18 +107,48 @@ namespace Dominoes
             ClearHelpDomino(DirectionMove.Right);
         }
 
-        private ImageDomino CreateHelpImage(Domino domino, DirectionMove direction, Action<DirectionMove> continueMove)
+        private ImageDomino CreateHelpImage(Domino domino, DirectionMove move, Direction direction, Action<DirectionMove> continueMove)
         {
             var imageDomino = new ImageDomino(domino);
-            imageDomino.InitializeComponent(direction, LastImageDomino[direction]);
+            imageDomino.InitializeComponent(move, direction, LastImageDomino[move]);
 
             imageDomino.Opacity = 0.5;
-            imageDomino.MouseLeftButtonUp += (s, e) => continueMove(direction);
-            imageDomino.MouseLeftButtonUp += (s, e) => ClearAllHelpDomino();
+            imageDomino.MouseLeftButtonUp += (s, e) =>
+            {
+                currentDirection = direction;
+                continueMove(move);
+                ClearAllHelpDomino();
+            };
             imageDomino.MouseEnter += (s, e) => imageDomino.Opacity = 0.75;
             imageDomino.MouseLeave += (s, e) => imageDomino.Opacity = 0.5;
 
             return imageDomino;
+        }
+
+        private List<Direction> GetCorrectDirections(Domino domino, DirectionMove move)
+        {
+            var directions = new List<Direction>();
+            if (domino.FirstValue == domino.SecondValue 
+                || LastImageDomino[move].Domino.FirstValue == LastImageDomino[move].Domino.SecondValue) 
+                directions.Add(IsFirstImage ? Direction.Center : LastImageDomino[move].Direction);
+            else
+            {
+                directions.Add(Direction.Center);
+                switch (LastImageDomino[move].Direction)
+                {
+                    case Direction.Center:
+                        directions.Add(Direction.Up);
+                        directions.Add(Direction.Down);
+                        break;
+                    case Direction.Up:
+                        directions.Add(Direction.Up);
+                        break;
+                    case Direction.Down:
+                        directions.Add(Direction.Down);
+                        break;
+                }
+            }
+            return directions;
         }
     }
 }
