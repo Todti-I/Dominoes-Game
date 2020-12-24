@@ -28,18 +28,23 @@ namespace Dominoes
         public event Action EventEndTurn;
         public event Action<GameState> EventGameOver;
 
-        public GameField()
+        public GameField(int countPlayers)
         {
+            if (countPlayers < 2 || countPlayers > 4) throw new Exception("Incorrect number of players!");
+            var countDomino = countPlayers == 2 ? 7 : 5;
             pool = Generator.CreatePool();
-            players.Add(new Player("PLAYER", Generator.CreateDeckPlayer(pool, 7), this));
-            for (var i = 0; i < 1; i++)
-                players.Add(new Bot($"BOT_{i}", Generator.CreateDeckPlayer(pool, 7), this));
-            currentPlayerId = 0;
+            players.Add(new Player("PLAYER", Generator.CreateDeckPlayer(pool, countDomino), this));
+            for (var i = 0; i < countPlayers - 1; i++)
+                players.Add(new Bot($"BOT_{i}", Generator.CreateDeckPlayer(pool, countDomino), this));
+            currentPlayerId = GetIdPlayerMoveFirst(); 
+        }
 
+        public void StartGame()
+        {
             EventStartTurn?.Invoke();
         }
 
-        public MoveState SetDomino(Domino domino, DirectionMove direction)
+        public void SetDomino(Domino domino, DirectionMove direction)
         {
             if (IsFirstMove)
             {
@@ -58,9 +63,8 @@ namespace Dominoes
                 LastRight.SetNext(domino);
                 LastRight = LastRight.NextDomino;
             }
-            else return MoveState.Cancel;
+            else throw new Exception("Incorrect move!");
             EventSetDomino?.Invoke(domino, direction);
-            return MoveState.Successful;
         }
 
         public Domino GetDominoFromPool()
@@ -95,15 +99,15 @@ namespace Dominoes
 
         public GameState CheckGameState()
         {
-            if (pool.Count == 0 && Players.All(p => CheckPlayerForNoMoves(p)))
-            {
-                EventGameOver?.Invoke(GameState.Draw);
-                return GameState.Draw;
-            }
             if (Players.Any(p => p.Deck.Count == 0))
             {
                 EventGameOver?.Invoke(GameState.Win);
                 return GameState.Win;
+            }
+            if (pool.Count == 0 && Players.All(p => CheckPlayerForNoMoves(p)))
+            {
+                EventGameOver?.Invoke(GameState.Draw);
+                return GameState.Draw;
             }
             return GameState.Progress;
         }
@@ -161,6 +165,26 @@ namespace Dominoes
             else currentPlayerId++;
 
             EventStartTurn?.Invoke();
+        }
+
+        private int GetIdPlayerMoveFirst()
+        {
+            var currentId = -1;
+            var minValue = int.MaxValue;
+            for (var i = 0; i < players.Count; i++)
+            {
+                for (var j = 0; j < players[i].Deck.Count; j++)
+                {
+                    if (CheckDominoForCorrectMove(players[i].Deck[j], DirectionMove.Left) 
+                        && players[i].Deck[j].FirstValue < minValue)
+                    {
+                        currentId = i;
+                        minValue = players[i].Deck[j].FirstValue;
+                    }
+                }
+            }
+            if (currentId == -1) throw new Exception("First move is missing!");
+            return currentId;
         }
     }
 }

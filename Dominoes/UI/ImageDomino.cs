@@ -32,9 +32,10 @@ namespace Dominoes
             b.Rotation = Rotation.Rotate90;
             b.EndInit();
             Source = b;
-            MaxHeight = 75;
-            MaxWidth = 37.5;
+            Height = 75;
+            Width = 37.5;
             Margin = new Thickness(5, 0, 5, 0);
+            
         }
 
         public void InitializeComponent(DirectionMove direction, ImageDomino last)
@@ -80,22 +81,5 @@ namespace Dominoes
             }
             return Rotation.Rotate0;
         }
-
-        /*private Rotation GetCorrectRotation(DirectionMove direction, Domino domino, Rotation start = Rotation.Rotate0)
-        {
-            if (direction == DirectionMove.Left)
-            {
-                if (LastDominoNode[DirectionMove.Left] == null) return start;
-                if (domino.SecondValue != LastDominoNode[DirectionMove.Left].OpenValue)
-                    return (Rotation)((int)Rotation.Rotate180 + (int)start);
-            }
-            else
-            {
-                if (LastDominoNode[DirectionMove.Right] == null) return start;
-                if (domino.FirstValue != LastDominoNode[DirectionMove.Right].OpenValue)
-                    return (Rotation)((int)Rotation.Rotate180 + (int)start);
-            }
-            return start;
-        }*/
     }
 }

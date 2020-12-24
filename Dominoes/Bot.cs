@@ -11,27 +11,30 @@ namespace Dominoes
         public Bot(string name, List<Domino> deck, GameField gameField)
             : base(name, deck, gameField) { }
 
-        public MoveState MakeMove()  // need rework
+        public void MakeMove()
         {
-            if (!gameField.CanMakeMove(this)) return MoveState.Cancel;
+            if (!gameField.CanMakeMove(this)) return;
             var idsLeft = gameField.GetIdOfCorrectMoves(this, DirectionMove.Left);
             var idsRight = gameField.GetIdOfCorrectMoves(this, DirectionMove.Right);
             if (idsLeft.Length == 0 && idsRight.Length == 0)
-                return MoveState.Cancel;
+                return;
 
             if (idsLeft.Length == 0 || Generator.Random.Next(0, 100) >= 50 && idsRight.Length != 0)
             {
-                if (MakeMove(idsRight[Generator.Random.Next(0, idsRight.Length)], DirectionMove.Right) == MoveState.Cancel)
-                    MakeMove(idsLeft[Generator.Random.Next(0, idsLeft.Length)], DirectionMove.Left);
+                var randomId = idsRight[Generator.Random.Next(0, idsRight.Length)];
+                if (gameField.CheckDominoForCorrectMove(Deck[randomId], DirectionMove.Right))
+                    MakeMove(Deck[randomId], DirectionMove.Right);
+                else throw new Exception("Something went wrong!");
             }
             else
             {
-                if (MakeMove(idsLeft[Generator.Random.Next(0, idsLeft.Length)], DirectionMove.Left) == MoveState.Cancel)
-                    MakeMove(idsRight[Generator.Random.Next(0, idsRight.Length)], DirectionMove.Right);
+                var randomId = idsLeft[Generator.Random.Next(0, idsLeft.Length)];
+                if (gameField.CheckDominoForCorrectMove(Deck[randomId], DirectionMove.Left))
+                    MakeMove(Deck[randomId], DirectionMove.Left);
+                else throw new Exception("Something went wrong!");
             }
-
             gameField.EndMove(this);
-            return MoveState.Successful;
+            return;
         }
     }
 }

@@ -22,27 +22,22 @@ namespace Dominoes
             this.gameField = gameField;
         }
 
-        public MoveState MakeMove(Domino domino, DirectionMove direction)
+        public void MakeMove(Domino domino, DirectionMove direction)
         {
             var id = deck.IndexOf(domino);
             if (id != -1)
-                return MakeMove(id, direction);
-            return MoveState.Cancel;
+                MakeMove(id, direction);
         }
 
-        public MoveState MakeMove(int id, DirectionMove direction)
+        public void MakeMove(int id, DirectionMove direction)
         {
-            if (Deck.Count == 0 || !gameField.CanMakeMove(this))
-                return MoveState.Cancel;
+            if (Deck.Count == 0 || !gameField.CanMakeMove(this) 
+                || !gameField.CheckDominoForCorrectMove(Deck[id], direction))
+                return;
 
-            var state = gameField.SetDomino(Deck[id], direction);
-
-            if (state == MoveState.Cancel)
-                return MoveState.Cancel;
-
+            gameField.SetDomino(Deck[id], direction);
             deck.RemoveAt(id);
             EndMove();
-            return MoveState.Successful;
         }
 
         public Domino TakeDomino()
@@ -62,7 +57,7 @@ namespace Dominoes
 
         public override string ToString()
         {
-            return $"{Name} Count: {Deck.Count} \n{string.Join(" | ", Deck)}";
+            return $"{Name} Count: {Deck.Count}   \n{string.Join(" | ", Deck)}";
         }
     }
 }

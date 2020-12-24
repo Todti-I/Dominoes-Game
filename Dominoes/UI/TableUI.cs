@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
 namespace Dominoes
@@ -55,6 +56,7 @@ namespace Dominoes
             else LastImageDomino[direction] = imageDomino;
 
             table.Children.Add(imageDomino);
+            Animation.Add(imageDomino);
         }
 
         public void AddHelpDomino(Domino domino, Action<DirectionMove> continueMove)
@@ -98,7 +100,7 @@ namespace Dominoes
             imageDomino.Opacity = 0.5;
             imageDomino.MouseLeftButtonUp += (s, e) => continueMove(direction);
             imageDomino.MouseLeftButtonUp += (s, e) => ClearAllHelpDomino();
-            imageDomino.MouseEnter += (s, e) => imageDomino.Opacity = 1;
+            imageDomino.MouseEnter += (s, e) => imageDomino.Opacity = 0.75;
             imageDomino.MouseLeave += (s, e) => imageDomino.Opacity = 0.5;
 
             return imageDomino;

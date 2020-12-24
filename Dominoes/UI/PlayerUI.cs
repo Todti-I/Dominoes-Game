@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 
 namespace Dominoes
 {
@@ -40,39 +41,47 @@ namespace Dominoes
             var image = new ImageDomino(domino);
             image.InitializeComponent();
 
-            image.MouseEnter += Image_MouseEnter;
-            image.MouseLeave += Image_MouseLeave;
+            image.MouseEnter += ImageDominoMouseEnter;
+            image.MouseLeave += ImageDominoMouseLeave;
 
-            image.MouseLeftButtonUp += Image_MouseLeftButtonUp;
+            image.MouseLeftButtonUp += ImageDominoMouseLeftButtonUp;
 
             return image;
         }
 
-        protected void Image_MouseLeave(object sender, MouseEventArgs e)
+        public void GetButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (player.TakeDomino() != null)
+                Update();
+        }
+
+        protected void ImageDominoMouseLeave(object sender, MouseEventArgs e)
         {
             if (sender is Image image)
             {
-                image.Opacity = 1;
+                Animation.Unselect(image);
             }
         }
 
-
-        protected void Image_MouseEnter(object sender, MouseEventArgs e)
+        protected void ImageDominoMouseEnter(object sender, MouseEventArgs e)
         {
             if (sender is Image image)
             {
-                image.Opacity = 0.5;
+                Animation.Select(image);
             }
         }
 
-        private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void ImageDominoMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (sender is ImageDomino imageDomino)
             {
                 tableUI.AddHelpDomino(imageDomino.Domino, (direction) =>
                 {
-                    player.MakeMove(imageDomino.Domino, direction);
-                    Update();
+                    Animation.Delete(imageDomino, (s, _e) => 
+                    {
+                        player.MakeMove(imageDomino.Domino, direction);
+                        Update();
+                    });
                 });
             }
         }
